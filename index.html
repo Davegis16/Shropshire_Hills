@@ -1,0 +1,243 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no" />
+    <title>Shropshire Hill Tops</title>
+
+    <link rel="stylesheet" href="vendor/@arcgis/core/assets/esri/themes/light/main.css" />
+    <style>
+      :root {
+        --page-bar-height: 48px;
+      }
+
+      html,
+      body,
+      #viewDiv {
+        padding: 0;
+        margin: 0;
+        height: 100%;
+        width: 100%;
+      }
+
+      body {
+        background-color: #f4efe3;
+        font-family: "Open Sans", "Segoe UI", Arial, sans-serif;
+      }
+
+      canvas {
+        filter: drop-shadow(0px 0px 5px #56481f);
+      }
+
+      .esri-widget {
+        background-color: transparent;
+      }
+
+      .esri-widget--button {
+        background-color: transparent;
+      }
+
+      .esri-ui-corner .esri-component {
+        box-shadow: none;
+      }
+
+      .esri-zoom .esri-widget--button:last-child {
+        border-top: 1px solid #56481f;
+      }
+
+      .esri-navigation-toggle:hover,
+      .esri-navigation-toggle:focus {
+        background-color: transparent;
+      }
+
+      .esri-widget--button {
+        color: #56481f;
+        background-color: #f4efe3;
+        border: 1px solid #56481f;
+        border-radius: 50%;
+        margin-top: 3px;
+      }
+
+      .esri-widget--button:hover {
+        background-color: #c9c1ae;
+        color: #56481f;
+      }
+
+      .esri-attribution__sources[role="button"] {
+        color: #56481f;
+      }
+
+      .page-bar {
+        position: absolute;
+        left: 0;
+        z-index: 10;
+        width: 100%;
+        box-sizing: border-box;
+        min-height: var(--page-bar-height);
+        background-color: #f4efe3;
+        color: #56481f;
+        font-size: 1.35em;
+        line-height: 1.15em;
+        padding: 0.75em 1.55em;
+      }
+
+      .page-header {
+        top: 0;
+        border-bottom: 1px solid rgba(86, 72, 31, 0.35);
+        font-weight: bold;
+      }
+
+      .page-footer {
+        bottom: 0;
+        border-top: 1px solid rgba(86, 72, 31, 0.35);
+      }
+
+      #contentDiv {
+        position: absolute;
+        top: var(--page-bar-height);
+        right: 0;
+        min-width: 220px;
+        width: 22%;
+        max-height: calc(100% - (var(--page-bar-height) * 2));
+        background-color: #f4efe3;
+        color: #56481f;
+        padding: 1.35em;
+        font-size: 13px;
+        line-height: 1.45em;
+        overflow: hidden;
+        box-sizing: border-box;
+        display: flex;
+        flex-direction: column;
+      }
+
+      h1 {
+        padding: 0.75em 0 0.65em;
+        margin: 0;
+        font-size: 1.35em;
+        line-height: 1.15em;
+      }
+
+      .title {
+        cursor: pointer;
+        padding: 1.5em 0 0.5em;
+        margin: 0;
+        font-weight: bold;
+      }
+
+      .map-icon {
+        height: 20px;
+        vertical-align: middle;
+      }
+
+      .indicator {
+        cursor: pointer;
+        border-bottom: 1px dashed #56481f;
+      }
+
+      .indicator:hover {
+        border-bottom: 1px solid #56481f;
+      }
+
+      footer {
+        font-size: 0.25em;
+        line-height: 1.3em;
+        border-top: 1px solid #56481f;
+        padding-top: 2em;
+        margin-top: 2em;
+      }
+
+      footer > a {
+        text-decoration: none;
+        border-bottom: 1px dashed #56481f;
+        color: #56481f;
+      }
+
+      footer > a:hover {
+        border-bottom: 1px solid #56481f;
+      }
+
+      .hill-table {
+        width: 100%;
+        border-collapse: collapse;
+        font-size: 0.92em;
+        line-height: 1.25em;
+      }
+
+      .hill-table-wrap {
+        min-height: 0;
+        overflow-y: auto;
+        flex: 1;
+      }
+
+      .hill-table th,
+      .hill-table td {
+        border-bottom: 1px solid rgba(86, 72, 31, 0.35);
+        padding: 0.38em 0;
+        text-align: left;
+        vertical-align: top;
+      }
+
+      .hill-table th:last-child,
+      .hill-table td:last-child {
+        text-align: right;
+        white-space: nowrap;
+      }
+
+      .hill-table a {
+        color: #56481f;
+        text-decoration: none;
+        border-bottom: 1px dashed #56481f;
+      }
+
+      .hill-table a:hover,
+      .hill-table a:focus {
+        border-bottom-style: solid;
+      }
+    </style>
+
+    <script type="importmap">
+      {
+        "imports": {
+          "@arcgis/core/": "./vendor/@arcgis/core/",
+          "@esri/arcgis-html-sanitizer": "./vendor/node_modules/@esri/arcgis-html-sanitizer/dist/esm/index.js",
+          "@esri/calcite-colors": "./vendor/node_modules/@esri/calcite-colors/dist/colors.module.js",
+          "@esri/calcite-colors/": "./vendor/node_modules/@esri/calcite-colors/",
+          "@esri/calcite-components": "./vendor/node_modules/@esri/calcite-components/dist/index.js",
+          "@esri/calcite-components/": "./vendor/node_modules/@esri/calcite-components/",
+          "@floating-ui/core": "./vendor/node_modules/@floating-ui/core/dist/floating-ui.core.browser.mjs",
+          "@floating-ui/dom": "./vendor/node_modules/@floating-ui/dom/dist/floating-ui.dom.browser.mjs",
+          "@floating-ui/utils": "./vendor/node_modules/@floating-ui/utils/dist/floating-ui.utils.esm.js",
+          "@floating-ui/utils/dom": "./vendor/node_modules/@floating-ui/utils/dist/floating-ui.utils.dom.esm.js",
+          "@popperjs/core": "./vendor/node_modules/@popperjs/core/lib/index.js",
+          "@popperjs/core/": "./vendor/node_modules/@popperjs/core/",
+          "@stencil/core": "./vendor/node_modules/@stencil/core/internal/stencil-core/index.js",
+          "@stencil/core/internal": "./vendor/node_modules/@stencil/core/internal/index.js",
+          "@stencil/core/internal/app-data": "./vendor/node_modules/@stencil/core/internal/app-data/index.js",
+          "@stencil/core/internal/client/index.js": "./vendor/node_modules/@stencil/core/internal/client/index.js",
+          "color": "./vendor/node_modules/color/index.js",
+          "focus-trap": "./vendor/node_modules/focus-trap/dist/focus-trap.esm.js",
+          "focus-trap/": "./vendor/node_modules/focus-trap/",
+          "form-request-submit-polyfill/form-request-submit-polyfill": "./vendor/node_modules/form-request-submit-polyfill/form-request-submit-polyfill.js",
+          "lodash-es": "./vendor/node_modules/lodash-es/lodash.js",
+          "lodash-es/": "./vendor/node_modules/lodash-es/",
+          "luxon": "./vendor/node_modules/luxon/src/luxon.js",
+          "luxon/": "./vendor/node_modules/luxon/",
+          "sortablejs": "./vendor/node_modules/sortablejs/modular/sortable.esm.js",
+          "tabbable": "./vendor/node_modules/tabbable/dist/index.esm.js"
+        }
+      }
+    </script>
+    <script type="module" src="main.js"></script>
+  </head>
+
+  <body>
+    <header class="page-bar page-header">Shropshire Hills National Landscape</header>
+    <div id="viewDiv"></div>
+    <div id="contentDiv">
+      <h1>Shropshire Hill Tops</h1>
+    </div>
+    <div class="page-bar page-footer">I often go out walking on the Shropshire Hills and can't always remember their names. So I created this map to help me remember. David Holmes.    
+                <script>(function whatever(){var s='@',n='dave.holmes',k='geoconfluence.co.uk',e=n+s+k,l='<a href=mailto:{{spam@uce.gov}}>{{spam@uce.gov}}</a>'.replace(/{{.+?(}})/g,e);document.write(l)})()</script>
+ </div>
+  </body>
+</html>
