@@ -20,9 +20,9 @@ const WKID = {
 };
 
 const DATA_PATHS = {
-  contours: "Data/Shropshire Hills Contours.geojson",
-  peaks: "Data/ShropshireHillTops_points.geojson",
-  boundary: "Data/Shropshire Hills Boundary.geojson"
+  contours: "Data/Shropshire Hills Contours.gz",
+  peaks: "Data/ShropshireHillTops_points.gz",
+  boundary: "Data/Shropshire Hills Boundary.gz"
 };
 
 const FIELD_NAMES = {
